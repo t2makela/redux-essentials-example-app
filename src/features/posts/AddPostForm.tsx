@@ -25,12 +25,7 @@ export const AddPostForm = () => {
     const title = elements.postTitle.value
     const content = elements.postContent.value
 
-    const newPost: Post = {
-      id: nanoid(),
-      title,
-      content,
-    }
-    dispatch(postAdded(newPost))
+    dispatch(postAdded(title, content))
 
     console.log('Values: ', { title, content })
 
