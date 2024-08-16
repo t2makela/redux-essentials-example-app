@@ -33,14 +33,21 @@ type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 
 // Create an initial state value for the reducer, with that type
 const initialState: Post[] = [
-  { id: '1', title: 'First Post!', content: 'Hello!', user: '0', date: sub(new Date(), { minutes: 10 }).toISOString(), reactions:  },
+  {
+    id: '1',
+    title: 'First Post!',
+    content: 'Hello!',
+    user: '0',
+    date: sub(new Date(), { minutes: 10 }).toISOString(),
+    reactions: initialReactions,
+  },
   {
     id: '2',
     title: 'Second Post',
     content: 'More text',
     user: '2',
     date: sub(new Date(), { minutes: 5 }).toISOString(),
-    reactions: 
+    reactions: initialReactions,
   },
 ]
 
@@ -55,7 +62,14 @@ const postsSlice = createSlice({
       },
       prepare(title: string, content: string, userId: string) {
         return {
-          payload: { id: nanoid(), date: new Date().toISOString(), title, content, user: userId, reactions: initialReactions },
+          payload: {
+            id: nanoid(),
+            date: new Date().toISOString(),
+            title,
+            content,
+            user: userId,
+            reactions: initialReactions,
+          },
         }
       },
     },
