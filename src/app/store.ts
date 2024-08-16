@@ -2,11 +2,12 @@ import { configureStore } from '@reduxjs/toolkit'
 import type { Action } from '@reduxjs/toolkit'
 import postReducer from '@/features/posts/postsSlice'
 import usersReducer from '@/features/users/usersSlice'
+import authReducer from '@/features/auth/authSlice'
 
 export const store = configureStore({
   // Pass in the root reducer setup as the `reducer` argument
   reducer: {
-    // Declare that `state.counter` will be updated by the `counterReducer` function
+    auth: authReducer,
     posts: postReducer,
     users: usersReducer,
   },
