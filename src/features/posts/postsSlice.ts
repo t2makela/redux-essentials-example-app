@@ -1,6 +1,5 @@
 import { RootState } from '@/app/store'
-import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit'
-import { sub } from 'date-fns'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { userLoggedOut } from '../auth/authSlice'
 import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
@@ -139,7 +138,7 @@ const postsSlice = createSlice({
   },
 })
 
-export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions
+export const { postUpdated, reactionAdded } = postsSlice.actions
 
 // Export the generated reducer function
 export default postsSlice.reducer

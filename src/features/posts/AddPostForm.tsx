@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
-
-import { nanoid } from '@reduxjs/toolkit'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { type Post, postAdded } from './postsSlice'
 import { selectCurrentUsername } from '../auth/authSlice'
 
 import { addNewPost } from './postsSlice'
