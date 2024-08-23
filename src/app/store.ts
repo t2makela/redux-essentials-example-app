@@ -1,5 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
-import type { Action } from '@reduxjs/toolkit'
+import { Action, ThunkAction, configureStore } from '@reduxjs/toolkit'
 import postReducer from '@/features/posts/postsSlice'
 import usersReducer from '@/features/users/usersSlice'
 import authReducer from '@/features/auth/authSlice'
@@ -19,3 +18,5 @@ export type AppStore = typeof store
 export type AppDispatch = typeof store.dispatch
 // Same for the `RootState` type
 export type RootState = ReturnType<typeof store.getState>
+// Export a reusable type for handwritten thunks
+export type AppThunk = ThunkAction<void, RootState, unknown, Action>
