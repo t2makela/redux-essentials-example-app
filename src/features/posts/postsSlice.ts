@@ -33,6 +33,7 @@ const initialReactions: Reactions = {
 }
 
 type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
+type NewPost = Pick<Post, 'title' | 'content' | 'user'>
 interface PostsState {
   posts: Post[]
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
@@ -52,6 +53,17 @@ export const fetchPosts = createAppAsyncThunk(
         return false
       }
     },
+  },
+)
+
+export const addNewPost = createAppAsyncThunk(
+  'posts/addNewPost',
+  // The payload creator receives the partial '{title, content, user}' object
+  async (initialPost: NewPost) => {
+    // We send the initial data to the fake API server
+    const response = await client.post<Post>('fakeApi/posts', initialPost)
+    // The response includes the complete post object, including unique ID
+    return response.data
   },
 )
 
