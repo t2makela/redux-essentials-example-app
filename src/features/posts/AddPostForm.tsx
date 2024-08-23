@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { nanoid } from '@reduxjs/toolkit'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { type Post, postAdded } from './postsSlice'
 import { selectCurrentUsername } from '../auth/authSlice'
 
+import { addNewPost } from './postsSlice'
 // TS types for the input fields
 // See: https://epicreact.dev/how-to-type-a-react-form-on-submit-handler/
 interface AddPostFormFields extends HTMLFormControlsCollection {
@@ -16,10 +17,11 @@ interface AddPostFormElements extends HTMLFormElement {
 }
 
 export const AddPostForm = () => {
+  const [addRequestStatus, setAddRequestStatus] = useState<'idle' | 'pending'>('idle')
   // Get the 'dispatch' method from store
   const dispatch = useAppDispatch()
   const userId = useAppSelector(selectCurrentUsername)!
-  const handleSubmit = (e: React.FormEvent<AddPostFormElements>) => {
+  const handleSubmit = async (e: React.FormEvent<AddPostFormElements>) => {
     // Prevent server submission
     e.preventDefault()
 
@@ -27,11 +29,18 @@ export const AddPostForm = () => {
     const title = elements.postTitle.value
     const content = elements.postContent.value
 
-    dispatch(postAdded(title, content, userId))
+    const form = e.currentTarget
 
-    console.log('Values: ', { title, content })
+    try {
+      setAddRequestStatus('pending')
+      await dispatch(addNewPost({ title, content, user: userId })).unwrap()
 
-    e.currentTarget.reset()
+      form.reset()
+    } catch (err) {
+      console.error('Failed to save the post: ', err)
+    } finally {
+      setAddRequestStatus('idle')
+    }
   }
 
   return (
