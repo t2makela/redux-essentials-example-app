@@ -1,5 +1,5 @@
 import { RootState } from '@/app/store'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction, createSelector } from '@reduxjs/toolkit'
 import { logout } from '../auth/authSlice'
 import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
@@ -147,10 +147,19 @@ export const selectAllPosts = (state: RootState) => state.posts.posts
 
 export const selectPostById = (state: RootState, postId: string) => state.posts.posts.find((post) => post.id === postId)
 
-export const selectPostsByUser = (state: RootState, userId: string) => {
-  const allPosts = selectAllPosts(state)
-
-  return allPosts.filter((post) => post.user === userId)
-}
+export const selectPostsByUser = createSelector(
+  // Pass in one or more "input selectors"
+  [
+    // We can pass in an existing selector function that
+    // reads something from the root 'stata' and returns it
+    selectAllPosts,
+    // and another function that extract one of the arguments
+    // and passes that onward
+    (state: RootState, userId: string) => userId,
+  ],
+  // the output function gets those vakues as its arguments,
+  // and will run when either input value changes
+  (posts, userId) => posts.filter((post) => post.user === userId),
+)
 export const selectPostsStatus = (state: RootState) => state.posts.status
 export const selectPostsError = (state: RootState) => state.posts.error
