@@ -4,12 +4,14 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks'
 
 import { logout } from '@/features/auth/authSlice'
 import { selectCurrentUser } from '@/features/users/usersSlice'
-import { fetchNotifications } from '@/features/notifications/notificationsSlice'
+import { fetchNotifications, selectUnreadNotificationsCount } from '@/features/notifications/notificationsSlice'
 import { UserIcon } from './UserIcon'
 
 export const Navbar = () => {
   const dispatch = useAppDispatch()
   const user = useAppSelector(selectCurrentUser)
+
+  const numUreadNotifications = useAppSelector(selectUnreadNotificationsCount)
 
   const isLoggedIn = !!user
 
@@ -24,12 +26,18 @@ export const Navbar = () => {
       dispatch(fetchNotifications())
     }
 
+    let unreadNotificationsBadge: React.ReactNode | undefined
+
+    if (numUreadNotifications > 0) {
+      unreadNotificationsBadge = <span className="badge">{numUreadNotifications}</span>
+    }
+
     navContent = (
       <div className="navContent">
         <div className="navLinks">
           <Link to="/posts">Posts</Link>
           <Link to="/users">Users</Link>
-          <Link to="/notifications">Notifications</Link>
+          <Link to="/notifications">Notifications {unreadNotificationsBadge}</Link>
           <button className="button small" onClick={fetchNewNotifications}>
             Refresh Notifications
           </button>
