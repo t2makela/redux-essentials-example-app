@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { Spinner } from '@/components/Spinner'
@@ -7,17 +7,18 @@ import { ReactionButtons } from './ReactionButtons'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
 import { fetchPosts, selectPostById, selectPostIds, selectPostsError, selectPostsStatus } from './postsSlice'
 import { useSelector } from 'react-redux'
+import { useGetPostsQuery, Post } from '../api/apiSlice'
 
 interface PostExcerptProps {
-  postId: string
+  post: Post
 }
 
-function PostExcerpt({ postId }: PostExcerptProps) {
-  const post = useAppSelector((state) => selectPostById(state, postId))
+function PostExcerpt({ post }: PostExcerptProps) {
+  // const post = useAppSelector((state) => selectPostById(state, postId))
   return (
-    <article className="post-exerpt" key={postId}>
+    <article className="post-exerpt" key={post.id}>
       <h3>
-        <Link to={`/posts/${postId}`}>{post.title}</Link>
+        <Link to={`/posts/${post.id}`}>{post.title}</Link>
       </h3>
       <div>
         <PostAuthor userId={post.user} />
@@ -29,25 +30,21 @@ function PostExcerpt({ postId }: PostExcerptProps) {
   )
 }
 export const PostList = () => {
-  const dispatch = useAppDispatch()
-  const orderedPostIds = useSelector(selectPostIds)
-  const postStatus = useAppSelector(selectPostsStatus)
-  const postsError = useAppSelector(selectPostsError)
-
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      dispatch(fetchPosts())
-    }
-  }),
-    [postStatus, dispatch]
+  const { data: posts = [], isLoading, isSuccess, isError, error } = useGetPostsQuery()
+  const sortedPosts = useMemo(() => {
+    const sortedPosts = posts.slice()
+    // Sort posts in descending chronological order
+    sortedPosts.sort((a, b) => b.date.localeCompare(a.date))
+    return sortedPosts
+  }, [posts])
   let content: React.ReactNode
 
-  if (postStatus === 'pending') {
+  if (isLoading) {
     content = <Spinner text="Loading..." />
-  } else if (postStatus === 'succeeded') {
-    content = orderedPostIds.map((postId) => <PostExcerpt key={postId} postId={postId} />)
-  } else if (postStatus === 'failed') {
-    content = <div>{postsError}</div>
+  } else if (isSuccess) {
+    content = sortedPosts.map((post) => <PostExcerpt key={post.id} post={post} />)
+  } else if (isError) {
+    content = <div>{error.toString()}</div>
   }
 
   return (
