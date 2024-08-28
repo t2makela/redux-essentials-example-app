@@ -33,7 +33,7 @@ const initialReactions: Reactions = {
 }
 
 type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
-type NewPost = Pick<Post, 'title' | 'content' | 'user'>
+export type NewPost = Pick<Post, 'title' | 'content' | 'user'>
 interface PostsState extends EntityState<Post, string> {
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
   error: string | null
