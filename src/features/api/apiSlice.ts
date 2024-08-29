@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 // Use the `Post` type we've already defined in `postsSlice`,
 // and then re-export it for ease of use
 import type { Post, NewPost, PostUpdate } from '@/features/posts/postsSlice'
-import type { User } from '@/features/user/usersSlice'
+import type { User } from '@/features/users/usersSlice'
 
 // Define our single API slice object
 export const apiSlice = createApi({
