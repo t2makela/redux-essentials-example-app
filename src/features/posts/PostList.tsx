@@ -5,9 +5,10 @@ import { Spinner } from '@/components/Spinner'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
-import { fetchPosts, selectPostById, selectPostIds, selectPostsError, selectPostsStatus } from './postsSlice'
+import { fetchPosts, Post, selectPostById, selectPostIds, selectPostsError, selectPostsStatus } from './postsSlice'
 import { useSelector } from 'react-redux'
-import { useGetPostsQuery, Post } from '../api/apiSlice'
+import { useGetPostsQuery } from '../api/apiSlice'
+import classnames from 'classnames'
 
 interface PostExcerptProps {
   post: Post
@@ -30,7 +31,7 @@ function PostExcerpt({ post }: PostExcerptProps) {
   )
 }
 export const PostList = () => {
-  const { data: posts = [], isLoading, isSuccess, isError, error } = useGetPostsQuery()
+  const { data: posts = [], isLoading, isFetching, isSuccess, isError, error, refetch } = useGetPostsQuery()
   const sortedPosts = useMemo(() => {
     const sortedPosts = posts.slice()
     // Sort posts in descending chronological order
@@ -42,7 +43,11 @@ export const PostList = () => {
   if (isLoading) {
     content = <Spinner text="Loading..." />
   } else if (isSuccess) {
-    content = sortedPosts.map((post) => <PostExcerpt key={post.id} post={post} />)
+    const renderedPosts = sortedPosts.map((post) => <PostExcerpt key={post.id} post={post} />)
+
+    const containerClassname = classnames('posts-container', { disabled: isFetching })
+
+    content = <div className={containerClassname}>{renderedPosts}</div>
   } else if (isError) {
     content = <div>{error.toString()}</div>
   }
@@ -50,6 +55,7 @@ export const PostList = () => {
   return (
     <section className="posts-list">
       <h2>Posts</h2>
+      <button onClick={refetch}>Refetch Posts</button>
       {content}
     </section>
   )
