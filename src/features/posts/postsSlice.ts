@@ -4,6 +4,7 @@ import { logout } from '../auth/authSlice'
 import { client } from '@/api/client'
 import { createAppAsyncThunk } from '@/app/withTypes'
 import { AppStartListening } from '@/app/listenerMiddleware'
+import { apiSlice } from '@/features/api/apiSlice'
 
 export interface Reactions {
   thumbsUp: number
@@ -32,7 +33,7 @@ const initialReactions: Reactions = {
   eyes: 0,
 }
 
-type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
+export type PostUpdate = Pick<Post, 'id' | 'title' | 'content'>
 export type NewPost = Pick<Post, 'title' | 'content' | 'user'>
 interface PostsState extends EntityState<Post, string> {
   status: 'idle' | 'pending' | 'succeeded' | 'failed'
@@ -156,7 +157,7 @@ export const selectPostsByUser = createSelector(
     // and passes that onward
     (state: RootState, userId: string) => userId,
   ],
-  // the output function gets those vakues as its arguments,
+  // the output function gets those values as its arguments,
   // and will run when either input value changes
   (posts, userId) => posts.filter((post) => post.user === userId),
 )
@@ -165,7 +166,7 @@ export const selectPostsError = (state: RootState) => state.posts.error
 
 export const addPostsListeners = (startAppListening: AppStartListening) => {
   startAppListening({
-    actionCreator: addNewPost.fulfilled,
+    matcher: apiSlice.endpoints.addNewPost.matchFulfilled,
     effect: async (action, listenerApi) => {
       const { toast } = await import('react-tiny-toast')
 
