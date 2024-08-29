@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { selectCurrentUsername } from '../auth/authSlice'
-
-import { addNewPost } from './postsSlice'
+import { useAddNewPostMutation } from '../api/apiSlice'
 // TS types for the input fields
 // See: https://epicreact.dev/how-to-type-a-react-form-on-submit-handler/
 interface AddPostFormFields extends HTMLFormControlsCollection {
@@ -18,6 +17,7 @@ export const AddPostForm = () => {
   // Get the 'dispatch' method from store
   const dispatch = useAppDispatch()
   const userId = useAppSelector(selectCurrentUsername)!
+  const [addNewPost, { isLoading }] = useAddNewPostMutation()
   const handleSubmit = async (e: React.FormEvent<AddPostFormElements>) => {
     // Prevent server submission
     e.preventDefault()
@@ -30,7 +30,7 @@ export const AddPostForm = () => {
 
     try {
       setAddRequestStatus('pending')
-      await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+      await addNewPost({ title, content, user: userId }).unwrap()
 
       form.reset()
     } catch (err) {
@@ -49,7 +49,7 @@ export const AddPostForm = () => {
         <label htmlFor="postAuthor">Author:</label>
         <label htmlFor="postContent">Content:</label>
         <textarea id="postContent" name="postContent" defaultValue="" required />
-        <button>Save Post</button>
+        <button disabled={isLoading}>Save Post</button>
       </form>
     </section>
   )
