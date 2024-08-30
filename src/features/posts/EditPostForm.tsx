@@ -2,7 +2,6 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
-import { postUpdated, selectPostById } from './postsSlice'
 
 import { useGetPostQuery, useEditPostMutation } from '../api/apiSlice'
 

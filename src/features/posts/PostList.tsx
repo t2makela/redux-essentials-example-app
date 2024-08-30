@@ -4,10 +4,7 @@ import { PostAuthor } from './PostAuthor'
 import { Spinner } from '@/components/Spinner'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
-import { useAppSelector, useAppDispatch } from '@/app/hooks'
-import { fetchPosts, Post, selectPostById, selectPostIds, selectPostsError, selectPostsStatus } from './postsSlice'
-import { useSelector } from 'react-redux'
-import { useGetPostsQuery } from '../api/apiSlice'
+import { useGetPostsQuery, Post } from '../api/apiSlice'
 import classnames from 'classnames'
 
 interface PostExcerptProps {
