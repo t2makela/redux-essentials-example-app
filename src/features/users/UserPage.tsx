@@ -6,8 +6,6 @@ import { useAppSelector } from '@/app/hooks'
 
 import { useGetPostsQuery, Post } from '@/features/api/apiSlice'
 
-import { selectPostsByUser } from '@/features/posts/postsSlice'
-
 import { selectUserById } from './usersSlice'
 
 // Create a TS type that represents "the result value passed
