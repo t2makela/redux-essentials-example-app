@@ -1,9 +1,12 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
 
 import { client } from '@/api/client'
+import { forceGenerateNotifications } from '@/api/server'
 
-import type { RootState } from '@/app/store'
+import type { AppThunk, RootState } from '@/app/store'
+
 import { createAppAsyncThunk } from '@/app/withTypes'
+import { apiSlice } from '@/features/api/apiSlice'
 
 export interface ServerNotification {
   id: string
@@ -23,6 +26,14 @@ export const fetchNotifications = createAppAsyncThunk('notifications/fetchNotifi
   const latestTimestamp = latestNotification ? latestNotification.date : ''
   const response = await client.get<ServerNotification[]>(`/fakeApi/notifications?since=${latestTimestamp}`)
   return response.data
+})
+
+export const apiSliceWithNotifications = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+    getNotifications: builder.query<ServerNotification[], void>({
+      query: () => '/notifications',
+    }),
+  }),
 })
 
 const notificationAdapter = createEntityAdapter<ClientNotification>({
@@ -71,3 +82,5 @@ export const selectUnreadNotificationsCount = (state: RootState) => {
 export const { selectAll: selectAllNotifications } = notificationAdapter.getSelectors(
   (state: RootState) => state.notifications,
 )
+
+export const { useGetNotificationsQuery } = apiSliceWithNotifications
