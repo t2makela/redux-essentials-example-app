@@ -34,13 +34,13 @@ export const apiSliceWithNotifications = apiSlice.injectEndpoints({
       query: () => '/notifications',
       async onCacheEntryAdded(arg, lifecycleApi) {
         // create a websocket connection when the cache subscription starts
-        const ws = new WebSocket('WS//localhost')
+        const ws = new WebSocket('ws://localhost')
         try {
           // wait for the initial query to resolve before proceeding
           await lifecycleApi.cacheDataLoaded
 
           // when data is received from the socket connection to the server,
-          // update our query result with the receied message
+          // update our query result with the received message
           const listener = (event: MessageEvent<string>) => {
             const message: {
               type: 'notifications'
@@ -55,6 +55,7 @@ export const apiSliceWithNotifications = apiSlice.injectEndpoints({
                   draft.push(...message.payload)
                   draft.sort((a, b) => b.date.localeCompare(a.date))
                 })
+
                 // Dispatch an additional action so we can track "read" state
                 lifecycleApi.dispatch(notificationsReceived(message.payload))
                 break
@@ -63,10 +64,11 @@ export const apiSliceWithNotifications = apiSlice.injectEndpoints({
                 break
             }
           }
+
           ws.addEventListener('message', listener)
         } catch {
           // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
-          // in which case `cacheDataLoaded` will thro
+          // in which case `cacheDataLoaded` will throw
         }
         // cacheEntryRemoved will resolve when the cache subscription is no longer active
         await lifecycleApi.cacheEntryRemoved
