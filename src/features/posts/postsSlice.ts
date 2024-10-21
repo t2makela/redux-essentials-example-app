@@ -50,7 +50,8 @@ export const addNewPost = createAppAsyncThunk(
     return response.data
   },
 )
-const postsAdapter = createEntityAdapter<Post>({
+const postsAdapter = createEntityAdapter<Post, string>({
+  selectId: (post: Post) => post.id,
   // Sort in descending date order
   sortComparer: (a, b) => b.date.localeCompare(a.date),
 })
